@@ -3,37 +3,23 @@
  * See LICENSE.md in the project root for license terms and full copyright notice.
  *--------------------------------------------------------------------------------------------*/
 
-import "./App.scss";
+import './App.scss';
 
-import { BrowserAuthorizationClient } from "@itwin/browser-authorization";
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+
+import { AbstractWidgetProps } from '@itwin/appui-abstract';
+import {
+  StagePanelLocation, StagePanelSection, StageUsage, UiItemsProvider
+} from '@itwin/appui-react';
+import { BrowserAuthorizationClient } from '@itwin/browser-authorization';
+import { FitViewTool, IModelApp, StandardViewId } from '@itwin/core-frontend';
+import { FillCentered } from '@itwin/core-react';
+import { Button, ButtonGroup, ProgressLinear } from '@itwin/itwinui-react';
+import { useAccessToken, Viewer, ViewerPerformance } from '@itwin/web-viewer-react';
+
+import { history } from './history';
+
 import type { ScreenViewport } from "@itwin/core-frontend";
-import { FitViewTool, IModelApp, StandardViewId } from "@itwin/core-frontend";
-import { FillCentered } from "@itwin/core-react";
-import { ProgressLinear } from "@itwin/itwinui-react";
-import {
-  MeasureTools,
-  MeasureToolsUiItemsProvider,
-} from "@itwin/measure-tools-react";
-import {
-  PropertyGridManager,
-  PropertyGridUiItemsProvider,
-} from "@itwin/property-grid-react";
-import {
-  TreeWidget,
-  TreeWidgetUiItemsProvider,
-} from "@itwin/tree-widget-react";
-import {
-  useAccessToken,
-  Viewer,
-  ViewerContentToolsProvider,
-  ViewerNavigationToolsProvider,
-  ViewerPerformance,
-  ViewerStatusbarItemsProvider,
-} from "@itwin/web-viewer-react";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
-
-import { history } from "./history";
-
 const App: React.FC = () => {
   const [iModelId, setIModelId] = useState(process.env.IMJS_IMODEL_ID);
   const [iTwinId, setITwinId] = useState(process.env.IMJS_ITWIN_ID);
@@ -136,12 +122,6 @@ const App: React.FC = () => {
     [viewConfiguration]
   );
 
-  const onIModelAppInit = useCallback(async () => {
-    await TreeWidget.initialize();
-    await PropertyGridManager.initialize();
-    await MeasureTools.startup();
-  }, []);
-
   return (
     <div className="viewer-container">
       {!accessToken && (
@@ -157,24 +137,70 @@ const App: React.FC = () => {
         authClient={authClient}
         viewCreatorOptions={viewCreatorOptions}
         enablePerformanceMonitors={true} // see description in the README (https://www.npmjs.com/package/@itwin/web-viewer-react)
-        onIModelAppInit={onIModelAppInit}
         uiProviders={[
-          new ViewerNavigationToolsProvider(),
-          new ViewerContentToolsProvider({
-            vertical: {
-              measureGroup: false,
-            },
-          }),
-          new ViewerStatusbarItemsProvider(),
-          new TreeWidgetUiItemsProvider(),
-          new PropertyGridUiItemsProvider({
-            enableCopyingPropertyText: true,
-          }),
-          new MeasureToolsUiItemsProvider(),
+          new MyUiItemsProvider(),
         ]}
       />
     </div>
   );
 };
+
+const buttons = [
+  "Button 1",
+  "Button 2",
+  "Button 3",
+  "Button 4",
+  "Button 5",
+];
+
+class MyUiItemsProvider implements UiItemsProvider {
+  public id = "my-ui-provider";
+  public provideWidgets(
+    _stageId: string,
+    stageUsage: string,
+    location: StagePanelLocation,
+    section?: StagePanelSection
+  ): ReadonlyArray<AbstractWidgetProps> {
+    const widgets: AbstractWidgetProps[] = [];
+    if (
+      location === StagePanelLocation.Right &&
+      section === StagePanelSection.Start &&
+      stageUsage === StageUsage.General
+    ) {
+      widgets.push({
+        id: "my-widget-id",
+        label: "My_Widget",
+        getWidgetContent: () => <MyComponent />,
+      });
+    }
+
+    return widgets;
+  }
+}
+
+function MyComponent() {
+  const [showInput, setShowInput] = React.useState(false);
+
+  return (
+    <>
+      <div style={{ display: "flex", position: "relative", alignItems: "center" }}>
+        <ButtonGroup
+          className={showInput ? "button-group contracted" : "button-group"}
+          overflowButton={() => <Button size="small" styleType="borderless">More</Button>}
+        >
+          {buttons.map((btn, index) => <Button key={index}>{btn}</Button>)}
+        </ButtonGroup>
+        <Button
+          onClick={() => {
+            setShowInput((prev) => !prev);
+          }}
+        >
+          Collapse
+        </Button>
+      </div>
+    </>
+  );
+}
+
 
 export default App;

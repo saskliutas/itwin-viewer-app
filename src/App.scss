@@ -9,3 +9,11 @@
     width: 400px;
   }
 }
+
+.button-group {
+  width: calc(100% - 32px);
+}
+
+.button-group.contracted {
+  width: 80px;
+}
