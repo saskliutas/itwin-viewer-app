@@ -1,8 +1,3 @@
-/*---------------------------------------------------------------------------------------------
- * Copyright (c) Bentley Systems, Incorporated. All rights reserved.
- * See LICENSE.md in the project root for license terms and full copyright notice.
- *--------------------------------------------------------------------------------------------*/
-
 import { useEffect, useState } from "react";
 import { history } from "../history";
 import { Viewer as WebViewer } from "@itwin/web-viewer-react";
@@ -45,14 +40,14 @@ function useIModelInfo() {
       return;
     }
 
-    if (!process.env.IMJS_ITWIN_ID || !process.env.IMJS_IMODEL_ID) {
+    if (!import.meta.env.IMJS_ITWIN_ID || !import.meta.env.IMJS_IMODEL_ID) {
       throw new Error(
         "Please add a valid iTwin ID and iModel ID in the .env file and restart the application or add it to the `iTwinId`/`iModelId` query parameter in the url and refresh the page. See the README for more information."
       );
     }
 
-    const configuredITwinId = process.env.IMJS_ITWIN_ID;
-    const configuredIModelId = process.env.IMJS_IMODEL_ID;
+    const configuredITwinId = import.meta.env.IMJS_ITWIN_ID;
+    const configuredIModelId = import.meta.env.IMJS_IMODEL_ID;
     history.push(
       `?iTwinId=${configuredITwinId}&iModelId=${configuredIModelId}`
     );

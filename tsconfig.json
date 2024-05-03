@@ -1,26 +1,22 @@
 {
   "compilerOptions": {
-    "target": "es2020",
+    "target": "esnext",
     "lib": [
       "dom",
       "dom.iterable",
       "esnext"
     ],
-    "allowJs": true,
+    "module": "esnext",
+    "moduleResolution": "Bundler",
+    "jsx": "react-jsx",
+    "strict": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    "strict": true,
-    "forceConsistentCasingInFileNames": true,
-    "module": "esnext",
-    "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react-jsx",
     "noFallthroughCasesInSwitch": true
   },
-  "include": [
-    "src"
-  ]
+  "include": ["src", "vite.config.mts"]
 }

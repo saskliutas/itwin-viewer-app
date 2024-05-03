@@ -32,11 +32,11 @@ export function useAuthorizationContext() {
 
 function createAuthClient() {
   const client = new BrowserAuthorizationClient({
-    scope: process.env.IMJS_AUTH_CLIENT_SCOPES ?? "",
-    clientId: process.env.IMJS_AUTH_CLIENT_CLIENT_ID ?? "",
-    redirectUri: process.env.IMJS_AUTH_CLIENT_REDIRECT_URI ?? "",
-    postSignoutRedirectUri: process.env.IMJS_AUTH_CLIENT_LOGOUT_URI,
-    authority: process.env.IMJS_AUTH_AUTHORITY,
+    scope: import.meta.env.IMJS_AUTH_CLIENT_SCOPES,
+    clientId: import.meta.env.IMJS_AUTH_CLIENT_CLIENT_ID,
+    redirectUri: import.meta.env.IMJS_AUTH_CLIENT_REDIRECT_URI,
+    postSignoutRedirectUri: import.meta.env.IMJS_AUTH_CLIENT_LOGOUT_URI,
+    authority: import.meta.env.IMJS_AUTH_AUTHORITY,
   });
   return {
     client,
